@@ -1,3 +1,4 @@
+
 let store = {
     user: { name: "Student" },
     apod: '',
@@ -17,17 +18,53 @@ const render = async (root, state) => {
 }
 
 
+const router = async () => {
+    console.log(location.pathname)
+    const routes = [
+        {path: "/", action: () => console.log("Viewing Dashboard")},
+        {path: "/Opportunity", action: () => {roverData(store, "/Opportunity"); console.log(this.path)}},
+        {path: "/Curiosity", action: () => {roverData(store, "/Curiosity"); console.log("Viewing Curiosity")}},
+        {path: "/Spirit", action: () => {roverData(store, "/Spirit"); console.log("Viewing Spirit")}}
+    ];
+
+    //Test each route for potential match
+    const potentialMatches = routes.map(route => {
+        return {
+            route: route,
+            isMatch: location.pathname === route.path
+        };
+    });
+
+    let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch)
+
+    if(!match) {
+        match = {
+            route: routes[0],
+            isMatch: true
+        };
+    }
+    match.route.action();
+};
+
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
+    let { apod } = state
+    let viewObject = [].concat(state)
+    console.log(viewObject)
 
     return `
         <header></header>
         <main>
             ${Greeting(store.user.name)}
-            <section>
+            <body>
+                <nav class = "nav">
+                    <a href="/${store.rovers[0]}" class = "nav__link" data-link> ${store.rovers[0]} </a>
+                    <a href="/${store.rovers[1]}" class = "nav__link" data-link> ${store.rovers[1]} </a>
+                    <a href="/${store.rovers[2]}" class = "nav__link" data-link> ${store.rovers[2]} </a>
+                </nav>
                 <h3>Put things on the page!</h3>
                 <p>Here is an example section.</p>
+                <p>${Object.keys(state)}</p>
                 <p>
                     One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
                     the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
@@ -37,14 +74,29 @@ const App = (state) => {
                     but generally help with discoverability of relevant imagery.
                 </p>
                 ${ImageOfTheDay(apod)}
-            </section>
+            </body>
         </main>
         <footer></footer>
     `
 }
 
+
+const navigateTo = url => {
+    history.pushState(null, null, url);
+    router();
+}
+
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
+    console.log("here")
+    document.addEventListener("click", e => {
+        console.log("now here")
+        if(e.target.matches("data-link")){
+            e.preventDefault();
+            navigateTo(e.target.href)
+        }
+    })
+    router()
     render(root, store)
 })
 
@@ -101,5 +153,16 @@ const getImageOfTheDay = (state) => {
         .then(res => res.json())
         .then(apod => updateStore(store, { apod }))
 
-    return data
+    return apod
 }
+
+const roverData = (state, rover) => {
+    let { apod } = state
+    console.log("fetching data")
+    fetch(`http://localhost:3000${rover}Data`)
+        .then(res => res.json())
+        .then(json => updateStore(store, json))
+
+    //return data
+}
+
