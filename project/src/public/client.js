@@ -16,7 +16,10 @@ const updateStore = (state, newState) => {
 const render = async(root, state) => {
     root.innerHTML = App(state)
 }
-
+const navigateTo = url => {
+    history.pushState(null,null,url);
+    router();
+};
 
 const getRoverTabs = (rovers) => {
     const roverTabs = [`<a href="/" class = "nav__link" data-link> Home </a>`]
@@ -36,9 +39,7 @@ const App = (state) => {
     console.log(state.entries())
 
     if(state.get("path") != '/'){
-        return `<nav class = "nav">
-                        ${getRoverTabs(rovers)}
-                    </nav>
+        return `
                     <div id = 'app'>
                         <h1>${Greeting(name)}</>
                         <h3>Here you can learn more about the rover ${currentRover}</h3>
@@ -66,8 +67,12 @@ const App = (state) => {
 
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
-
-    //router()
+    document.body.addEventListener('click', e => {
+        if(e.target.matches('[data-link]')){
+            e.preventDefault();
+            navigateTo(e.target.href);
+        }
+    });
     router()
     //render(root, store)
 })
@@ -169,7 +174,7 @@ const getRoverData = (rover) => {
     if(rover != "/"){
         fetch(`http://localhost:3000${rover}/data`)
             .then(res => res.json())
-            .then(data => updateStore(store, data))
+            .then(data => { /*console.log(`Rover data: ${JSON.stringify(data)}`);*/ updateStore(store, data)})
             .then(()=>console.log("finished fetching data"))
     }
 }
@@ -179,7 +184,7 @@ const getRoverImages = (rover) => {
     if(rover != "/"){
         fetch(`http://localhost:3000${rover}/photos`)
             .then(res => res.json())
-            .then(images => updateStore(store, images))
+            .then(images => { console.log(`Rover data: ${JSON.stringify(images)}`); updateStore(store, images)})
             .then(()=>console.log("finished fetching images"))
     }
 }
