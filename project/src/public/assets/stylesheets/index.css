@@ -39,31 +39,32 @@ body {
   font-size: 18px;
 }
 
+p{
+  font-family: 'Quicksand', sans-serif;
+  font-size: 18px;
+}
+
 #app {
-  margin-left: 6em;
+  margin-left: 2em;
   line-height: 1.5;
   font-weight: 500;
 }
 
 .nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: var(--nav-width);
-  height: 100vh;
-  background: #222222;
+  background: #b9ddd9;
 }
 
 .nav__link {
   display: block;
   padding: 12px 18px;
   text-decoration: none;
-  color: #eeeeee;
-  font-weight: 500;
+  color: #020101;
+  font-weight: 800;
+  font-size: larger;
 }
 
 .nav__link:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(17, 27, 116, 0.05);
 }
 
 /* -------------------  LARGE SCREENS  -------------- */

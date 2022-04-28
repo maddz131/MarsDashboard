@@ -50,7 +50,6 @@ app.get(/\/*\/(photos)$/, async (req, res) => {
     }
 })
 
-
 app.get('/*', async (req, res) => {
     res.sendFile(path.resolve(__dirname, "../public", "index.html"))
 })
